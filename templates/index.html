@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Library</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Virtual Book Library</h1>
+    <input type="text" id="search" placeholder="Search by title or author...">
+    <div id="books"></div>
+
+    <script>
+        async function fetchBooks() {
+            const response = await fetch('/books');
+            const books = await response.json();
+            displayBooks(books);
+
+            document.getElementById('search').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const filtered = books.filter(b => b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query));
+                displayBooks(filtered);
+            });
+        }
+
+        function displayBooks(books) {
+            const booksDiv = document.getElementById('books');
+            booksDiv.innerHTML = '';
+            books.forEach(book => {
+                const bookEl = document.createElement('div');
+                bookEl.className = 'book';
+                bookEl.innerHTML = `<h3>${book.title}</h3><p>by ${book.author}</p>`;
+                booksDiv.appendChild(bookEl);
+            });
+        }
+
+        fetchBooks();
+    </script>
+</body>
+</html>
